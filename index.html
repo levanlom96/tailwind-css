@@ -9,13 +9,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Allura&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="w-[1920px] min-h-[100vh] relative">
+<body class="overflow-x-hidden bg-black">
+    <div id="scalable-content" class="w-[1920px] min-h-[100vh] relative transform-gpu origin-top-left transition-transform duration-300 ease-out">
         <img src="./images/clouds.png" alt="clouds" class="w-full h-auto absolute top-0 left-0">
         <img src="./images/gradient.png" alt="gradient" class="w-full h-auto absolute top-0 left-0">
         <img src="./images/mountains.png" alt="mountains" class="w-full h-auto absolute top-[465px] left-0">
         <img src="./images/human.png" alt="human" class="w-auto h-auto absolute top-[1166px] left-0">
-        <img src="./images/bottom-gradient.png" alt="gradient" class="w-full h-full absolute top-[1028px] left-0">
+        <img src="./images/bottom-gradient.png" alt="gradient" class="w-full h-auto absolute top-[1669px] left-0">
         <div class="w-full h-full absolute top-0 left-0 p-[80px] box-border">
             <div class="w-full flex justify-between items-center box-border">
                 <img src="./images/logo.svg" alt="logo" class="w-auto h-auto">
@@ -36,5 +36,49 @@
             </div>
         </div>
     </div>
+
+    <!-- Scale indicator for testing -->
+    <div class="fixed top-4 right-4 bg-black bg-opacity-75 text-white px-3 py-2 rounded-lg text-sm font-mono z-50">
+        Scale: <span id="scale-indicator">1.00</span>
+    </div>
+
+    <script>
+        // Resize Observer for scaling content based on 1920px baseline
+        const scalableContent = document.getElementById('scalable-content');
+        const scaleIndicator = document.getElementById('scale-indicator');
+        const baselineWidth = 1920;
+
+        function updateScale() {
+            const currentWidth = window.innerWidth;
+            const scale = currentWidth / baselineWidth;
+            
+            // Apply the scale transform
+            scalableContent.style.transform = `scale(${scale})`;
+            
+            // Update the scale indicator
+            scaleIndicator.textContent = scale.toFixed(2);
+            
+            // Adjust body height to prevent scrolling issues
+            const scaledHeight = scalableContent.scrollHeight * scale;
+            document.body.style.height = `${scaledHeight}px`;
+        }
+
+        // Create ResizeObserver to watch for body size changes
+        const resizeObserver = new ResizeObserver((entries) => {
+            updateScale();
+        });
+
+        // Start observing the body element
+        resizeObserver.observe(document.body);
+
+        // Initial scale calculation
+        updateScale();
+
+        // Also listen to window resize as a fallback
+        window.addEventListener('resize', updateScale);
+
+        // Handle initial load
+        document.addEventListener('DOMContentLoaded', updateScale);
+    </script>
 </body>
 </html>
